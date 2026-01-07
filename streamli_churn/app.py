@@ -38,7 +38,8 @@ st.caption("Logistic Regression • Analysis + Prediction")
 # -----------------------------
 @st.cache_data
 def load_data():
-    df = pd.read_csv("WA_Fn-UseC_-Telco-Customer-Churn.csv")
+    url = "https://raw.githubusercontent.com/blastchar/telco-customer-churn/master/WA_Fn-UseC_-Telco-Customer-Churn.csv"
+    df = pd.read_csv(url)
 
     df['Churn'] = df['Churn'].map({'Yes': 1, 'No': 0})
     df['PaperlessBilling'] = df['PaperlessBilling'].map({'Yes': 1, 'No': 0})
@@ -187,3 +188,4 @@ with tab2:
 
 st.divider()
 st.caption(f"Model Accuracy: {accuracy:.2f}")
+
