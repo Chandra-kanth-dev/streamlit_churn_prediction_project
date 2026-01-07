@@ -1,3 +1,5 @@
+import os
+import urllib.error
 import pandas as pd
 import numpy as np
 import streamlit as st
@@ -38,30 +40,58 @@ st.caption("Logistic Regression • Analysis + Prediction")
 # -----------------------------
 @st.cache_data
 def load_data():
-    url = "https://raw.githubusercontent.com/blastchar/telco-customer-churn/master/WA_Fn-UseC_-Telco-Customer-Churn.csv"
-    df = pd.read_csv(url)
+    # ---- 1. Try local CSV (if exists) ----
+    local_path = os.path.join(
+        os.path.dirname(__file__),
+        "WA_Fn-UseC_-Telco-Customer-Churn.csv"
+    )
 
+    try:
+        if os.path.exists(local_path):
+            df = pd.read_csv(local_path)
+        else:
+            raise FileNotFoundError
+    except (FileNotFoundError, OSError):
+        # ---- 2. Fallback to online CSV ----
+        url = "https://raw.githubusercontent.com/IBM/telco-customer-churn-on-icp4d/master/data/Telco-Customer-Churn.csv"
+        try:
+            df = pd.read_csv(url)
+        except urllib.error.HTTPError:
+            st.error("❌ Unable to load dataset from both local and online sources.")
+            st.stop()
+
+    # -----------------------------
+    # PREPROCESSING
+    # -----------------------------
     df['Churn'] = df['Churn'].map({'Yes': 1, 'No': 0})
     df['PaperlessBilling'] = df['PaperlessBilling'].map({'Yes': 1, 'No': 0})
 
+    # One-hot encode Contract & PaymentMethod
     encoder = OneHotEncoder(drop='first', sparse_output=False)
     encoded = encoder.fit_transform(df[['Contract', 'PaymentMethod']])
-    encoded_df = pd.DataFrame(encoded, columns=encoder.get_feature_names_out())
+    encoded_df = pd.DataFrame(
+        encoded,
+        columns=encoder.get_feature_names_out(),
+        index=df.index
+    )
 
     df = pd.concat([df, encoded_df], axis=1)
 
+    # Internet-related features
     for col in ['OnlineSecurity', 'TechSupport']:
         df[col] = df[col].map({'Yes': 1, 'No': 0, 'No internet service': 0})
 
+    # Convert TotalCharges
     df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
     df.dropna(inplace=True)
 
     return df
 
+
 df = load_data()
 
 # -----------------------------
-# FEATURES
+# FEATURES & TARGET
 # -----------------------------
 features = [
     'tenure',
@@ -78,7 +108,7 @@ X = df[features]
 y = df['Churn']
 
 # -----------------------------
-# TRAIN MODEL ONCE
+# TRAIN MODEL
 # -----------------------------
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
@@ -165,12 +195,12 @@ with tab2:
         input_data = {
             'tenure': tenure,
             'MonthlyCharges': monthly_charges,
-            'Contract_One year': 1 if contract == "One year" else 0,
-            'Contract_Two year': 1 if contract == "Two year" else 0,
-            'PaperlessBilling': 1 if paperless == "Yes" else 0,
-            'PaymentMethod_Electronic check': 1 if payment == "Electronic check" else 0,
-            'TechSupport': 1 if tech_support == "Yes" else 0,
-            'OnlineSecurity': 1 if online_security == "Yes" else 0
+            'Contract_One year': int(contract == "One year"),
+            'Contract_Two year': int(contract == "Two year"),
+            'PaperlessBilling': int(paperless == "Yes"),
+            'PaymentMethod_Electronic check': int(payment == "Electronic check"),
+            'TechSupport': int(tech_support == "Yes"),
+            'OnlineSecurity': int(online_security == "Yes")
         }
 
         input_df = pd.DataFrame([input_data])
@@ -188,4 +218,3 @@ with tab2:
 
 st.divider()
 st.caption(f"Model Accuracy: {accuracy:.2f}")
-
