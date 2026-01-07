@@ -1,0 +1,145 @@
+/* =========================
+   GLOBAL PAGE STYLING
+   ========================= */
+
+body {
+    background-color: #f4f6fb;
+    font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+/* Reduce top padding */
+.block-container {
+    padding-top: 1.5rem;
+    padding-bottom: 2rem;
+}
+
+/* =========================
+   HEADINGS
+   ========================= */
+
+h1 {
+    color: #111827;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+h2, h3 {
+    color: #1f2937;
+    font-weight: 500;
+    margin-top: 1.2rem;
+}
+
+/* Subtitle / caption */
+small, .stCaption {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+/* =========================
+   METRIC CARD
+   ========================= */
+
+[data-testid="metric-container"] {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+[data-testid="stMetricValue"] {
+    font-size: 30px;
+    font-weight: 600;
+    color: #2563eb;
+}
+
+/* =========================
+   BUTTONS
+   ========================= */
+
+button[kind="primary"] {
+    background-color: #2563eb !important;
+    border-radius: 10px !important;
+    padding: 0.55rem 1.1rem !important;
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+}
+
+button[kind="primary"]:hover {
+    background-color: #1d4ed8 !important;
+}
+
+/* =========================
+   INPUT ELEMENTS
+   ========================= */
+
+.stSlider, .stSelectbox, .stRadio {
+    margin-bottom: 0.8rem;
+}
+
+label {
+    font-size: 0.9rem !important;
+    color: #374151 !important;
+}
+
+/* =========================
+   ALERTS (RESULT BOX)
+   ========================= */
+
+div[data-testid="stAlert"] {
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 0.95rem;
+}
+
+/* Success (Low churn) */
+div[data-testid="stAlert"][class*="success"] {
+    background-color: #ecfdf5;
+    color: #065f46;
+}
+
+/* Error (High churn) */
+div[data-testid="stAlert"][class*="error"] {
+    background-color: #fef2f2;
+    color: #991b1b;
+}
+
+/* =========================
+   EXPANDER (MODEL DETAILS)
+   ========================= */
+
+details {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 10px 14px;
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================
+   PLOTS
+   ========================= */
+
+.stPyplot {
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+/* =========================
+   TABLES
+   ========================= */
+
+thead tr th {
+    background-color: #f3f4f6 !important;
+    font-weight: 500;
+}
+
+tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+/* =========================
+   REMOVE STREAMLIT BRANDING GAP
+   ========================= */
+
+footer {
+    visibility: hidden;
+}
